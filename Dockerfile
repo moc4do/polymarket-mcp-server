@@ -55,7 +55,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Note: MCP servers communicate via stdio, not HTTP ports
 
 # Entry point
-CMD ["python", "-m", "polymarket_mcp.server"]
+CMD ["python", "-m", "polymarket_mcp.web.app"]
 
 # Labels for metadata
 LABEL org.opencontainers.image.title="Polymarket MCP Server" \
@@ -63,3 +63,4 @@ LABEL org.opencontainers.image.title="Polymarket MCP Server" \
       org.opencontainers.image.version="0.1.0" \
       org.opencontainers.image.authors="Polymarket MCP Team" \
       org.opencontainers.image.licenses="MIT"
+
