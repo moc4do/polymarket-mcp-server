@@ -101,6 +101,12 @@ class PolymarketConfig(BaseSettings):
         description="Gamma API endpoint for market data"
     )
 
+    # Proxy
+    PROXY_URL: Optional[str] = Field(
+        default=None,
+        description="HTTP/HTTPS proxy URL (e.g. http://user:pass@host:port)"
+    )
+
     # Logging
     LOG_LEVEL: str = Field(
         default="INFO",
@@ -221,3 +227,4 @@ def load_config() -> PolymarketConfig:
         ValidationError: If required variables are missing or invalid
     """
     return PolymarketConfig()
+
