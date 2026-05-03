@@ -214,11 +214,11 @@ class WebSocketManager:
         """Connect to CLOB WebSocket"""
         try:
             logger.info(f"Connecting to CLOB WebSocket: {self.CLOB_WS_URL}")
-            self.clob_ws = await websockets.connect(
-                self.CLOB_WS_URL,
-                ping_interval=20,
-                ping_timeout=10
-            )
+            ws_kwargs = dict(ping_interval=20, ping_timeout=10)
+            proxy_url = getattr(self.config, 'PROXY_URL', None)
+            if proxy_url:
+                ws_kwargs['proxy'] = proxy_url
+            self.clob_ws = await websockets.connect(self.CLOB_WS_URL, **ws_kwargs)
             self.clob_connected = True
             logger.info("CLOB WebSocket connected")
 
@@ -237,11 +237,11 @@ class WebSocketManager:
         """Connect to real-time data WebSocket"""
         try:
             logger.info(f"Connecting to real-time WebSocket: {self.REALTIME_WS_URL}")
-            self.realtime_ws = await websockets.connect(
-                self.REALTIME_WS_URL,
-                ping_interval=20,
-                ping_timeout=10
-            )
+            ws_kwargs = dict(ping_interval=20, ping_timeout=10)
+            proxy_url = getattr(self.config, 'PROXY_URL', None)
+            if proxy_url:
+                ws_kwargs['proxy'] = proxy_url
+            self.realtime_ws = await websockets.connect(self.REALTIME_WS_URL, **ws_kwargs)
             self.realtime_connected = True
             logger.info("Real-time WebSocket connected")
 
@@ -910,3 +910,4 @@ class WebSocketManager:
                 "task_exists": self.background_task is not None
             }
         }
+
