@@ -154,12 +154,20 @@
             container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading markets...</p></div>';
 
             document.getElementById('markets-title').textContent = `${category} Markets`;
-
-            showNotification(`Loading ${category} markets...`, 'info');
-            // Note: This would use the filter_markets_by_category tool
-            // For now, we'll search by category name
-            await searchMarkets();
             document.getElementById('search-input').value = category;
+
+            try {
+                const response = await fetch(`/api/markets/search?q=${encodeURIComponent(category)}&limit=20`);
+                const data = await response.json();
+
+                if (data.markets && data.markets.length > 0) {
+                    displayMarkets(data.markets);
+                } else {
+                    container.innerHTML = '<p class="text-muted">No markets found</p>';
+                }
+            } catch (error) {
+                container.innerHTML = `<p class="text-error">Failed to load: ${error.message}</p>`;
+            }
         }
 
         async function loadClosingSoon() {
