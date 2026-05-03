@@ -1,3 +1,4 @@
+import os
 """
 Market Analysis Tools for Polymarket MCP Server.
 
@@ -89,7 +90,7 @@ async def _fetch_gamma_api(endpoint: str, params: Optional[Dict] = None) -> Any:
     await rate_limiter.acquire(EndpointCategory.GAMMA_API)
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=30.0, proxy=os.environ.get("PROXY_URL") or os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")) as client:
             url = f"{GAMMA_API_URL}{endpoint}"
             response = await client.get(url, params=params or {})
             response.raise_for_status()
@@ -106,7 +107,7 @@ async def _fetch_clob_api(endpoint: str, params: Optional[Dict] = None) -> Any:
     await rate_limiter.acquire(EndpointCategory.MARKET_DATA)
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=30.0, proxy=os.environ.get("PROXY_URL") or os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")) as client:
             url = f"{CLOB_API_URL}{endpoint}"
             response = await client.get(url, params=params or {})
             response.raise_for_status()
@@ -836,3 +837,4 @@ async def handle_tool(name: str, arguments: Dict[str, Any]) -> List[types.TextCo
             type="text",
             text=json.dumps({"error": str(e)}, indent=2)
         )]
+
