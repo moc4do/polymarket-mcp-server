@@ -293,6 +293,8 @@ async def get_trending_markets(limit: int = 10):
         if result and len(result) > 0:
             import json
             data = json.loads(result[0].text)
+            if isinstance(data, list):
+                return JSONResponse({"markets": data})
             return JSONResponse(data)
 
         return JSONResponse({"markets": []})
@@ -318,6 +320,8 @@ async def search_markets(q: str, limit: int = 20):
         if result and len(result) > 0:
             import json
             data = json.loads(result[0].text)
+            if isinstance(data, list):
+                return JSONResponse({"markets": data})
             return JSONResponse(data)
 
         return JSONResponse({"markets": []})
