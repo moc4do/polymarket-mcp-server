@@ -444,6 +444,17 @@ async def get_stats():
 # WebSocket for Real-time Updates
 # ============================================================================
 
+def _serialize(obj):
+    """Convert non-serializable objects for JSON"""
+    if hasattr(obj, 'isoformat'):
+        return obj.isoformat()
+    if isinstance(obj, dict):
+        return {k: _serialize(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_serialize(i) for i in obj]
+    return obj
+
+
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """WebSocket for real-time dashboard updates"""
@@ -456,7 +467,7 @@ async def websocket_endpoint(websocket: WebSocket):
             "type": "status",
             "data": {
                 "connected": config is not None,
-                "stats": stats,
+                "stats": _serialize(stats),
             }
         })
 
@@ -468,7 +479,7 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.send_json({
                 "type": "stats_update",
                 "data": {
-                    "stats": stats,
+                    "stats": _serialize(stats),
                     "timestamp": datetime.now().isoformat(),
                 }
             })
@@ -509,3 +520,4 @@ def start(host: str = "0.0.0.0", port: int = 8080):
 
 if __name__ == "__main__":
     start()
+
