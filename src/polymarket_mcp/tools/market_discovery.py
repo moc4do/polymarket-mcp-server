@@ -1,3 +1,4 @@
+import os
 """
 Market Discovery Tools for Polymarket MCP Server.
 
@@ -47,7 +48,7 @@ async def _fetch_gamma_markets(
     await rate_limiter.acquire(EndpointCategory.GAMMA_API)
 
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
+        async with httpx.AsyncClient(timeout=30.0, proxy=os.environ.get("PROXY_URL") or os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")) as client:
             url = f"{GAMMA_API_URL}{endpoint}"
 
             # Set default params
@@ -646,3 +647,4 @@ async def handle_tool(name: str, arguments: Dict[str, Any]) -> List[types.TextCo
             type="text",
             text=json.dumps({"error": str(e)}, indent=2)
         )]
+
